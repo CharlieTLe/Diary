@@ -81,17 +81,9 @@ def open_diary():
     print ("Opening diary:", diary_file())
 
     if os.name == "nt":
-        call(["notepad", diary_file()])
+        os.system("start " + diary_file())
     else:
-        call(["open", diary_file()])
-          
-def open_diary():
-    print ("Opening diary:", diary_file())
-	
-    if os.name == "nt":
-        call(["notepad", diary_file()])
-    else:
-        call(["open", diary_file()])
+        os.system("open " + diary_file())
 
 if args.open == True or args.command == "o":
     open_diary()
