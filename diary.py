@@ -45,8 +45,8 @@ class DiaryShell(cmd.Cmd):
     timerecord(arg)
   def do_q(self, arg):
     'Quit out of the Diary Shell.'
-    bye()
 
+# sets diary file-name
 def diary_file():
   diary_path = os.path.dirname(os.path.realpath(__file__))
   if os.name == "nt":
@@ -55,6 +55,7 @@ def diary_file():
     diary_path += "/" 
   return diary_path + strftime("%Y-%m-%d", localtime()) + ".txt"
 
+# saves diary
 def write_to_diary(command):
   with open(diary_file(), "a") as diary:
     # Append diary with a newline if content exists.
@@ -64,6 +65,7 @@ def write_to_diary(command):
     entry += actiondict[command]
     diary.write(entry + strftime("%H:%M:%S") + " " + socket.gethostname())
 
+# opens diary
 def open_diary():
   print ("Opening diary:", diary_file())
   if os.name == "nt":
@@ -71,10 +73,8 @@ def open_diary():
   else:
     os.system("open " + diary_file())
 
-def bye():
-  print("Diary is exiting...")
-
-def timerecord(days=14):
+# records the time
+def timerecord(days):
   mydate = datetime.date.today()
   pastdate = mydate + datetime.timedelta(days=-int(days))
   increment = datetime.timedelta(days=1)
@@ -88,7 +88,7 @@ def timerecord(days=14):
           print(line)
     pastdate += increment
 
-parser = argparse.ArgumentParser(description="Adds time to today's diary-entry.")
+parser = argparse.ArgumentParser()
 parser.add_argument('command', help="b: begin, s: stop, o: open, m: mark, c: cmd")
 parser.add_argument('--open', action="store_true", help="Opens the file.")
 parser.add_argument('--time-record', action="store_true", help="Print diary-records.")
@@ -103,7 +103,4 @@ if args.command not in ['o', 'c']:
 if args.time_record:
   timerecord()
 if args.command == 'c':
-  try:
-    DiaryShell().cmdloop()
-  except KeyboardInterrupt:
-    bye()
+  DiaryShell().cmdloop()
