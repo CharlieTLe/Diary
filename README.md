@@ -1,19 +1,14 @@
-Diary
-=====
+# Diary
 
 Diary is a Python script that makes timekeeping and note entry conveniently simple.
 
-How To Use It:
---
+## How To Use It:
 
-Invoke diary.py in a terminal followed by a command with an optional argument. See the example
-for a better understanding of Diary.  
+Invoke diary.py in a terminal followed by a command with an optional argument. See the example for a better understanding of Diary.  
 
-Combine Diary with a file syncing service like Dropbox to bring Diary with you
-wherever you go.
+Combine Diary with a file syncing service like Dropbox to bring Diary with you wherever you go.
 
-Commands:
---
+## Commands:
 
  - `b` Appends to the end of the Diary "Begin [time stamp] [computer name]".
  - `s` Appends to the end of the Diary "Stop [time stamp] [computer name]".
@@ -21,16 +16,14 @@ Commands:
  - `o` Opens the Diary.
  - `c` Opens the command line version of Diary.
 
-Options:
---------
+## Options:
 
  - `--open`  Opens the file in the default text editor after executing the command.
  - `--time-record` Prints out two weeks of time stamps relative to the current date.
 
-Example:
--------
+## Example:
 
-###Terminal
+### Terminal
 
 ```sh
 Diary$ diary b --open
@@ -45,13 +38,11 @@ under certain conditions.
 Diary$ 
 ```
 
-###Text Editor
-
+### Text Editor
 
 >Begin 22:27:29 521-CartA.local
 
-
-###What just happened?
+### What just happened?
 ```sh
 diary b --open
 ```
@@ -59,13 +50,11 @@ diary b --open
 - appended `Begin 22:27:29 521-CartA.local` to the text file.
 - opened the text file for editing.
 
-#Contributing
+# Contributing
 All are welcomed to edit the source, create issues, and report bugs.
 
-License:
---------
+## License:
 GPL v2.0
 
-Author:
----
+## Author:
 Charlie Le ([@charlietle](https://twitter.com/charlietle))
