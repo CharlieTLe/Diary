@@ -16,6 +16,7 @@
 from time import localtime, strftime
 from subprocess import call
 import argparse, socket, datetime, re, os, cmd
+import sys
 
 print("""
 Copyright (C) 2014  Charlie Thanh Le
@@ -81,7 +82,8 @@ def open_diary():
     if not os.path.isfile(diary_file()):
         open(diary_file(), 'a').close()
 
-    print ("Opening diary: " + diary_file())
+    sys.stdout.write("Opening file: ")
+    print(diary_file())
 
     if os.name == "nt":
         os.system("start " + diary_file())
