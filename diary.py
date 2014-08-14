@@ -81,7 +81,7 @@ def open_diary():
     if not os.path.isfile(diary_file()):
         open(diary_file(), 'a').close()
 
-    print ("Opening diary:", diary_file())
+    print ("Opening diary: " + diary_file())
 
     if os.name == "nt":
         os.system("start " + diary_file())
