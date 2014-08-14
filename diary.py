@@ -78,6 +78,9 @@ def write_to_diary(command):
       diary.write(entry + strftime("%H:%M:%S") + " " + socket.gethostname())
 
 def open_diary():
+    if not os.path.isfile(diary_file()):
+        open(diary_file(), 'a').close()
+
     print ("Opening diary:", diary_file())
 
     if os.name == "nt":
