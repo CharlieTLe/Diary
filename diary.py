@@ -17,12 +17,12 @@ from time import localtime, strftime
 from subprocess import call
 import argparse, socket, datetime, re, os, cmd
 
-print("""
+'''
 Copyright (C) 2014  Charlie Thanh Le
 This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions.
-""")
+'''
 
 class DiaryShell(cmd.Cmd):
   intro = 'Welcome to the Diary shell. Type help or ? to list commands.\n'
@@ -67,7 +67,7 @@ def write_to_diary(command):
 
 # opens diary
 def open_diary():
-  print ("Opening diary:", diary_file())
+  print "Opening diary:", diary_file()
   if os.name == "nt":
     os.system("start " + diary_file())
   else:
