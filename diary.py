@@ -85,14 +85,14 @@ def open_diary():
     else:
         os.system("open " + diary_file())
 
-if args.open == True or args.command == "o":
-    open_diary()
-
 def bye():
     print("Diary is exiting...")
 
 if args.command not in ['o', 'c']:
     write_to_diary(args.command)
+	
+if args.open == True or args.command == "o":
+    open_diary()
 
 def timerecord(days=14):
     mydate = datetime.date.today()
