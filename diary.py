@@ -50,9 +50,9 @@ class DiaryShell(cmd.Cmd):
 def diary_file():
   diary_path = os.path.dirname(os.path.realpath(__file__))
   if os.name == "nt":
-    diary_path += '\\'
+    diary_path += "\\"
   else:
-    diary_path += "/" 
+    diary_path += "/"
   return diary_path + strftime("%Y-%m-%d", localtime()) + ".txt"
 
 # saves diary
@@ -61,9 +61,9 @@ def write_to_diary(command):
     # Append diary with a newline if content exists.
     entry = ""
     if diary.tell():
-      entry = '\n'
+      entry = "\n"
     entry += actiondict[command]
-    diary.write(entry + strftime("%H:%M:%S") + " " + socket.gethostname())
+    diary.write(entry + strftime("%H:%M:%S"))
 
 # opens diary
 def open_diary():
@@ -96,7 +96,7 @@ args = parser.parse_args()
 
 actiondict = {'b': "Begin ", 's': "Stop ", 'm': "Mark "}
 
-if args.open or args.command == "o":
+if args.open or args.command == 'o':
   open_diary()
 if args.command not in ['o', 'c']:
   write_to_diary(args.command)
