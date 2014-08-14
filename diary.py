@@ -67,6 +67,9 @@ def write_to_diary(command):
 
 # opens diary
 def open_diary():
+  # create empty file iff file does not exist
+  if not os.path.isfile(diary_file()):
+    open(diary_file(),'a').close()
   print "Opening diary:", diary_file()
   if os.name == "nt":
     os.system("start " + diary_file())
