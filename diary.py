@@ -39,7 +39,11 @@ class DiaryShell(cmd.Cmd):
         write_to_diary('m')
     def do_o(self, arg):
         'Open your diary in a text editor.'
-        open_diary()
+        # Seems to pass in empty string if no arg was passed in.
+        if len(arg):
+            open_diary(arg)
+        else:
+            open_diary(0)
     def do_timerecord(self, arg):
         'Print out the past x number of days of Diary entries.'
         timerecord(arg)
@@ -54,7 +58,7 @@ parser.add_argument('--open', action="store_true", help="open file appending tim
 parser.add_argument('--time-record', action="store_true", help="print out two weeks of time stamps")
 args = parser.parse_args()
 
-def diary_file():
+def diary_file(deltadays=0):
     diary_path = os.path.dirname(os.path.realpath(__file__))
 
     if os.name == "nt":
@@ -62,7 +66,8 @@ def diary_file():
     else:
         diary_path += "/"
         
-    return diary_path + strftime("%Y-%m-%d", localtime()) + ".txt"
+    diary_date = datetime.date.today() + datetime.timedelta(days=-int(deltadays))
+    return diary_path + diary_date.strftime("%Y-%m-%d") + ".txt"
 
 actiondict = {'b': "Begin ", 's': "Stop ", 'm': "Mark "}
 
@@ -76,27 +81,28 @@ def write_to_diary(command):
 
       entry += actiondict[command]
       diary.write(entry + strftime("%H:%M:%S") + " " + socket.gethostname())
+        
+def open_diary(deltadays=0):
+    diary_file_deltadays = diary_file(deltadays)
+    if not os.path.isfile(diary_file_deltadays):
+        open(diary_file_deltadays, 'a').close()
 
-def open_diary():
-    if not os.path.isfile(diary_file()):
-        open(diary_file(), 'a').close()
-
-    print ("Opening diary:", diary_file())
+    print ("Opening diary:", diary_file_deltadays)
 
     if os.name == "nt":
-        os.system("start " + diary_file())
+        os.system("start " + diary_file_deltadays)
     else:
-        os.system("open " + diary_file())
+        os.system("open " + diary_file_deltadays)
 
 def bye():
     print("Diary is exiting...")
 
 if args.command not in ['o', 'c']:
     write_to_diary(args.command)
-	
+
 if args.open == True or args.command == "o":
     open_diary()
-
+	
 def timerecord(days=14):
     mydate = datetime.date.today()
     pastdate = mydate + datetime.timedelta(days=-int(days))
