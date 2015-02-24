@@ -60,14 +60,10 @@ args = parser.parse_args()
 
 def diary_file(deltadays=0):
     diary_path = os.path.dirname(os.path.realpath(__file__))
-
-    if os.name == "nt":
-        diary_path += '\\'
-    else:
-        diary_path += "/"
-        
     diary_date = datetime.date.today() + datetime.timedelta(days=-int(deltadays))
-    return diary_path + diary_date.strftime("%Y-%m-%d") + ".txt"
+    file_name = diary_date.strftime("%Y-%m-%d") + ".txt"
+
+    return os.path.join(diary_path, file_name)
 
 actiondict = {'b': "Begin ", 's': "Stop ", 'm': "Mark "}
 
@@ -113,7 +109,7 @@ def timerecord(days=14):
           diary_date_file = pastdate.strftime("%Y-%m-%d") + ".txt"
           print(diary_date_file)
 
-          with open(diary_path + diary_date_file, "r") as diary:
+          with open(os.path.join(diary_path, diary_date_file), "r") as diary:
             for line in diary:
               search = re.search(r"^(Begin )|^(Stop )|^(Mark )", line)
               if search:
