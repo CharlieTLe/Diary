@@ -59,12 +59,13 @@ cipher_suite = None
 
 
 class DiaryShell(cmd.Cmd):
+    intro = 'Welcome to the Diary shell.   Type help or ? to list commands.\n'
+    prompt = '(Diary) > '
 
     def __init__(self, config):
-        self.config = config
+        cmd.Cmd.__init__(self)
 
-        self.intro = 'Welcome to the Diary shell.   Type help or ? to list commands.\n'
-        self.prompt = '(Diary) >'
+        self.config = config
 
     def do_b(self):
         """Append your diary with Begin [Timestamp] [Computer Name]."""
@@ -141,11 +142,12 @@ def decrypt_diary(config, filename):
             raw = '\n'.join(f.readlines())
             f.close()
 
-            decrypted = decrypt_string(config, raw)
-            if decrypted:
-                f = open(filename, 'w')
-                f.writelines(decrypted)
-                f.close()
+            if raw:
+                decrypted = decrypt_string(config, raw)
+                if decrypted:
+                    f = open(filename, 'w')
+                    f.writelines(decrypted)
+                    f.close()
 
     except IOError as e:
         logger.critical('Failed to decrypt diary file {}: {}'.format(filename, e))
@@ -162,11 +164,12 @@ def encrypt_diary(config, filename):
             raw = '\n'.join(f.readlines())
             f.close()
 
-            encrypted = encrypt_string(config, raw)
-            if encrypted:
-                f = open(filename, 'w')
-                f.writelines(encrypted)
-                f.close()
+            if raw:
+                encrypted = encrypt_string(config, raw)
+                if encrypted:
+                    f = open(filename, 'w')
+                    f.writelines(encrypted)
+                    f.close()
 
     except IOError as e:
         logger.critical('Failed to encrypt diary file {}: {}'.format(filename, e))

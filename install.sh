@@ -6,7 +6,7 @@ if ! which pip &> /dev/null; then
     exit 1
 fi
 
-pip install -r ./requirements.txt 2> /dev/null
+pip install --user -r ./requirements.txt 2> /dev/null
 pip_code=$?
 if [[ ${pip_code} -ne 0 ]]; then
     echo -e "\n[FATAL] Failed to install python requirements via pip"
