@@ -1,2 +1,4 @@
 # Ignore all diary entries.
 *.txt
+
+.idea
