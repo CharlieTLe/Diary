@@ -2,4 +2,5 @@
 *.txt
 !requirements.txt
 *.pyc
+*.swp
 .idea

@@ -140,14 +140,12 @@ def decrypt_diary(config, filename):
     try:
         with open(filename, 'r') as f:
             raw = f.read()
-            f.close()
 
-            if raw:
-                decrypted = decrypt_string(config, raw)
-                if decrypted:
-                    f = open(filename, 'w')
+        if raw:
+            decrypted = decrypt_string(config, raw)
+            if decrypted:
+                with open(filename, 'w') as f:
                     f.writelines(decrypted)
-                    f.close()
 
     except IOError as e:
         logger.critical('Failed to decrypt diary file {}: {}'.format(filename, e))
@@ -162,14 +160,12 @@ def encrypt_diary(config, filename):
     try:
         with open(filename, 'r') as f:
             raw = f.read()
-            f.close()
 
-            if raw:
-                encrypted = encrypt_string(config, raw)
-                if encrypted:
-                    f = open(filename, 'w')
+        if raw:
+            encrypted = encrypt_string(config, raw)
+            if encrypted:
+                with open(filename, 'w') as f:
                     f.writelines(encrypted)
-                    f.close()
 
     except IOError as e:
         logger.critical('Failed to encrypt diary file {}: {}'.format(filename, e))
