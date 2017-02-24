@@ -3,13 +3,43 @@ Diary
 
 Diary is a Python script that makes timekeeping and note entry conveniently simple.
 
+
+Installation:
+--
+
+Run `install.sh`
+
 How To Use It:
 --
 
-Invoke diary.py in a terminal followed by a command with an optional argument. See the example
-for a better understanding of Diary.  
+```
+usage: diary [-h] [--config CONFIG_PATH] [--open] [--time-record]
+             {create_config,version,help,b,s,o,m,c} ...
 
-Combine Diary with a file syncing service like Dropbox to bring Diary with you
+Appends time stamps to a text file named after the current day.
+
+positional arguments:
+  {create_config,version,help,b,s,o,m,c}
+                        Sub commands
+    create_config       Generate default configuration file
+    version             Displays the version number
+    help                Displays full help message
+    b                   Begin
+    s                   Stop
+    o                   Open
+    m                   Mark
+    c                   Command
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --config CONFIG_PATH, -c CONFIG_PATH
+                        path to diary configuration json
+                        default: /Users/charliele/.diary.conf.json
+  --open, -o            open file appending time stamp.
+  --time-record, -t     print out two weeks of time stamps
+```
+
+Combine Diary with a file syncing service like iCloud to bring Diary with you
 wherever you go.
 
 Commands:
@@ -20,12 +50,15 @@ Commands:
  - `m` Appends to the end of the Diary  "[time stamp] [computer name]".
  - `o` Opens the Diary.
  - `c` Opens the command line version of Diary.
+ - `create_config` Creates a configuration file that holds editor preferences 
+and the key for encrpyting/decrypting your diary.
 
 Options:
 --------
 
  - `--open`  Opens the file in the default text editor after executing the command.
  - `--time-record` Prints out two weeks of time stamps relative to the current date.
+ - `--config` Override the default config path to load the configuration for diary.
 
 Example:
 -------
@@ -33,31 +66,37 @@ Example:
 ###Terminal
 
 ```sh
-Diary$ diary b --open
+diary --open b
 
 Copyright (C) 2014  Charlie Thanh Le
 This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions.
 
-('Current Local Time:', '2014-08-04')
-('Opening diary:', '/Users/charlie/Dropbox/Diary/2014-08-04.txt')
-Diary$ 
+02-23 21:35 [Diary] {INFO}: decrypting diary "/Users/charliele/.diary/2017-02-23.txt"
+02-23 21:35 [Diary] {INFO}: encrypting diary "/Users/charliele/.diary/2017-02-23.txt"
+02-23 21:35 [Diary] {INFO}: decrypting diary "/Users/charliele/.diary/2017-02-23.txt"
+02-23 21:35 [Diary] {INFO}: Opening diary: /Users/charliele/.diary/2017-02-23.txt
+
+	 -- You must completely close the application before this script will be able to continue --
 ```
 
-###Text Editor
+The text editor of your choice will open editing.
 
+After you close the process that edits the file...
 
->Begin 22:27:29 521-CartA.local
-
+```
+02-23 21:35 [Diary] {INFO}: encrypting diary "/Users/charliele/.diary/2017-02-23.txt"
+```
 
 ###What just happened?
 ```sh
-diary b --open
+diary --open b
 ```
-- created a text file with the name of the current date in the same location as the diary.py file.
-- appended `Begin 22:27:29 521-CartA.local` to the text file.
-- opened the text file for editing.
+- configuration file is loaded with the editor and key to encrypt/decrypt the diary
+- creates/loads text file for today
+- appended `Begin 21:35:14 Charlies-MacBook-Pro.local` to the text file.
+- opened the text file for editing
 
 #Contributing
 All are welcomed to edit the source, create issues, and report bugs.
