@@ -280,6 +280,10 @@ def create_config(config_path):
     perms = 0o600
 
     try:
+        if os.path.exists(config_path):
+            logger.warning('Another config exists at: "{}"'.format(config_path)) 
+            return False
+
         with open(config_path, mode='w') as f:
             f.writelines(json.dumps(default_config, indent=4))
             f.close()
@@ -332,11 +336,12 @@ def get_config(config_path):
 
 
 def get_args():
-    parser = argparse.ArgumentParser(description="Appends time stamps to a text file named after the current day.")
+    parser = argparse.ArgumentParser(description="Appends time stamps to a text file named after the current day.", 
+                                     formatter_class=argparse.RawTextHelpFormatter)
 
     default_config_path = os.environ['HOME'] + '/.diary.conf.json'
     parser.add_argument('--config', '-c', dest='config_path', type=str, default=default_config_path,
-                        help='path to diary configuration json')
+            help='path to diary configuration json\ndefault: {}'.format(default_config_path))
 
     parser.add_argument('--open', '-o', action="store_true", help="open file appending time stamp.")
     parser.add_argument('--time-record', '-t', action="store_true", help="print out two weeks of time stamps")
