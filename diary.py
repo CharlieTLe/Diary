@@ -139,7 +139,7 @@ def decrypt_diary(config, filename):
     logger.info('decrypting diary "{}"'.format(filename))
     try:
         with open(filename, 'r') as f:
-            raw = '\n'.join(f.readlines())
+            raw = f.read()
             f.close()
 
             if raw:
@@ -161,7 +161,7 @@ def encrypt_diary(config, filename):
     logger.info('encrypting diary "{}"'.format(filename))
     try:
         with open(filename, 'r') as f:
-            raw = '\n'.join(f.readlines())
+            raw = f.read()
             f.close()
 
             if raw:
