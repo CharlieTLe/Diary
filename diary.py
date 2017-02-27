@@ -28,13 +28,18 @@ from datetime import datetime, timedelta
 from cryptography.fernet import Fernet, InvalidToken
 
 __app_name__ = 'Diary'
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 actiondict = {'b': "Begin ", 's': "Stop ", 'm': "Mark "}
+actionregex = '' + '|'.join([v for k, v in actiondict.items()])
+
+fs_delim = '/'
+if os.name == 'nt':
+    fs_delim = '\\'
 
 logging.getLogger().setLevel(logging.INFO)
 logging.getLogger().name = __app_name__
-logging.basicConfig(format='%(asctime)s [%(name)s] {%(levelname)s}: %(message)s', datefmt='%m-%d %H:%M')
+logging.basicConfig(format='%(levelname)s [%(name)s]: %(message)s')
 
 logger = logging.getLogger()
 
@@ -46,20 +51,12 @@ default_config = {
     'diary_base': '{}/.diary'.format(os.environ['HOME'])
 }
 
-print("""
-Copyright (C) 2014  Charlie Thanh Le
-This program comes with ABSOLUTELY NO WARRANTY.
-This is free software, and you are welcome to redistribute it
-under certain conditions.
-""")
-
-
 # Global cipher suite
 cipher_suite = None
 
 
 class DiaryShell(cmd.Cmd):
-    intro = 'Welcome to the Diary shell.   Type help or ? to list commands.\n'
+    intro = 'Welcome to the Diary shell. Type help or ? to list commands.\n'
     prompt = '(Diary) > '
 
     def __init__(self, config):
@@ -88,10 +85,12 @@ class DiaryShell(cmd.Cmd):
         else:
             open_diary(self.config, 0)
 
-    @staticmethod
-    def do_timerecord(arg):
+    def do_timestamps(self, arg):
         """Print out the past x number of days of Diary entries."""
-        timerecord(arg)
+        if arg:
+            timestamps(self.config, days=int(arg))
+        else:
+            timestamps(self.config)
 
     @staticmethod
     def do_q(arg):
@@ -136,7 +135,7 @@ def decrypt_diary(config, filename):
     Decrypt a diary file in-place
     """
 
-    logger.info('decrypting diary "{}"'.format(filename))
+    logger.debug('decrypting diary "{}"'.format(filename))
     try:
         with open(filename, 'r') as f:
             raw = f.read()
@@ -156,7 +155,7 @@ def encrypt_diary(config, filename):
     Encrypt a diary file in-place
     """
 
-    logger.info('encrypting diary "{}"'.format(filename))
+    logger.debug('encrypting diary "{}"'.format(filename))
     try:
         with open(filename, 'r') as f:
             raw = f.read()
@@ -172,11 +171,6 @@ def encrypt_diary(config, filename):
 
 
 def diary_file(config, deltadays=0):
-    # diary_path = os.path.dirname(os.path.realpath(__file__))
-
-    fs_delim = '/'
-    if os.name == 'nt':
-        fs_delim = '\\'
 
     diary_date = datetime.today() + timedelta(days=-int(deltadays))
     return '{}{}{}.txt'.format(config['diary_base'], fs_delim, diary_date.strftime('%Y-%m-%d'))
@@ -226,7 +220,7 @@ def open_diary(config, deltadays=0):
         Popen(args).wait()
 
     except KeyboardInterrupt:
-        logger.info("Canceled, hopefully you've saved your changes!")
+        logger.debug("Canceled, hopefully you've saved your changes!")
 
     encrypt_diary(config, filename)
 
@@ -235,27 +229,33 @@ def bye():
     logger.info('Diary is exiting...')
 
 
-def timerecord(days=14):
-    mydate = datetime.today()
-    pastdate = mydate + timedelta(days=-int(days))
-    increment = timedelta(days=1)
-
-    while pastdate <= mydate:
+def timestamps(config, days=14):
+    """
+    Prints out lines beginning with action words in the last x amount of days
+    :param config:
+    :param days: number of days to print lines for
+    :return:
+    """
+    last_diary_file = None
+    for days_ago in range(days, -1, -1):
         try:
-            diary_date_file = '{}.txt'.format(pastdate.strftime('%Y-%m-%d'))
-            logger.info('Diary filename: {}'.format(diary_date_file))
+            filename = diary_file(config, deltadays=days_ago)
+            with open(filename, "r") as diary:
+                if last_diary_file:
+                    logger.warning("Diary entries between {} through {} could not be found.".format(last_diary_file, filename.split(fs_delim)[-1]))
+                    last_diary_file = None
 
-            with open(diary_date_file + diary_date_file, "r") as diary:
+                decrypt_diary(config, filename)
+
                 for line in diary:
-                    search = re.search(r"^(Begin )|^(Stop )|^(Mark )", line)
-                    if search:
-                        print(line)
+                    if re.search(actionregex, line):
+                        logger.info("{}: {}".format(filename.split(fs_delim)[-1], line))
+
+                encrypt_diary(config, filename)
 
         except IOError as e:
-            logger.critical('Failed to open diary file: {}'.format(e))
-            sys.exit(1)
-
-        pastdate = pastdate + increment
+            last_diary_file = filename.split(fs_delim)[-1]
+            pass
 
 
 def ensure_base_path(config):
@@ -344,18 +344,22 @@ def get_args():
             help='path to diary configuration json\ndefault: {}'.format(default_config_path))
 
     parser.add_argument('--open', '-o', action="store_true", help="open file appending time stamp.")
-    parser.add_argument('--time-record', '-t', action="store_true", help="print out two weeks of time stamps")
 
     commands_parser = parser.add_subparsers(dest='command', help='Sub commands')
 
     commands_parser.add_parser('create_config', help='Generate default configuration file')
     commands_parser.add_parser('version', help='Displays the version number')
     commands_parser.add_parser('help', help='Displays full help message')
-    commands_parser.add_parser('b', help='Begin')
-    commands_parser.add_parser('s', help='Stop')
-    commands_parser.add_parser('o',  help='Open')
-    commands_parser.add_parser('m', help='Mark')
-    commands_parser.add_parser('c', help='Command')
+
+    commands_parser.add_parser('b', help='Appends Begin and the timestamp to the EOF')
+    commands_parser.add_parser('s', help='Appends Stop and the timestamp to the EOF')
+    commands_parser.add_parser('m', help='Appends Mark and the timestamp to the EOF')
+
+    commands_parser.add_parser('o',  help="Opens today's diary for editing")
+    commands_parser.add_parser('c', help='Open up the cli version of Diary')
+
+    timestamps_parser = commands_parser.add_parser('timestamps', help='Prints out timestamps from the previous diary entries')
+    timestamps_parser.add_argument('since_days_ago', nargs='?', default=14, help='How many days ago since the present to print timestamps from.')
 
     return parser, parser.parse_args()
 
@@ -365,7 +369,7 @@ def main():
     Main application entry point
     """
 
-    parser, args = get_args()
+    parser, args= get_args()
 
     if args.command == 'help':
         parser.print_help()
@@ -384,14 +388,14 @@ def main():
     # ensure base path exists
     ensure_base_path(config)
 
-    if args.command not in ['o', 'c']:
+    if args.command in actiondict.keys():
         write_to_diary(config, args.command)
 
     if args.open is True or args.command == "o":
         open_diary(config)
 
-    if args.time_record is True:
-        timerecord()
+    if args.command == 'timestamps':
+        timestamps(config, int(args.since_days_ago))
 
     if args.command == 'c':
         try:
