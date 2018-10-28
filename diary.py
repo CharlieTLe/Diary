@@ -180,8 +180,9 @@ def write_to_diary(config, command):
 
     filename = diary_file(config)
 
-    # First, decrypt it
-    decrypt_diary(config, filename)
+    if os.path.isfile(filename):
+        # First, decrypt it
+        decrypt_diary(config, filename)
 
     try:
         with open(filename, mode='a') as diary:
