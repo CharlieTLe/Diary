@@ -12,7 +12,7 @@ Run `install.sh`
 How To Use It:
 --
 
-```
+```sh
 usage: diary [-h] [--config CONFIG_PATH] [--open] [--time-record]
              {create_config,version,help,b,s,o,m,c} ...
 
@@ -63,7 +63,7 @@ Options:
 Example:
 -------
 
-###Terminal
+### Terminal
 
 ```sh
 diary --open b
@@ -85,7 +85,7 @@ The text editor of your choice will open editing.
 
 After you close the process that edits the file...
 
-```
+```sh
 02-23 21:35 [Diary] {INFO}: encrypting diary "/Users/charliele/.diary/2017-02-23.txt"
 ```
 
