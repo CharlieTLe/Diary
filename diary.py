@@ -28,7 +28,7 @@ from datetime import datetime, timedelta
 from cryptography.fernet import Fernet, InvalidToken
 
 __app_name__ = 'Diary'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 actiondict = {'b': "Begin ", 's': "Stop ", 'm': "Mark "}
 actionregex = '' + '|'.join([v for k, v in actiondict.items()])
@@ -64,15 +64,15 @@ class DiaryShell(cmd.Cmd):
 
         self.config = config
 
-    def do_b(self):
+    def do_b(self, arg):
         """Append your diary with Begin [Timestamp] [Computer Name]."""
         write_to_diary(self.config, 'b')
 
-    def do_s(self):
+    def do_s(self, arg):
         """Append your diary with Stop [Timestamp] [Computer Name]."""
         write_to_diary(self.config, 's')
 
-    def do_m(self):
+    def do_m(self, arg):
         """Append your diary with Mark [Timestamp] [Computer Name]."""
         write_to_diary(self.config, 'm')
 
